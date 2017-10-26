@@ -1,9 +1,10 @@
 from exceptions import TypeError
+from base import Transformer
 
 type_mapping_table = {'DoubleType': 'float', 'FloatType': 'float', 'IntegerType': 'int',\
         'StringType' : 'str', 'LongType': 'long', 'ArrayType': 'list'}
 
-class TypeConverter(object):
+class TypeConverter(Transformer):
     def __init__(self):
         pass
 

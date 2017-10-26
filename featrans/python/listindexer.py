@@ -10,5 +10,7 @@ class ListIndexer(Transformer):
         if feature is None:
             return SparseVector(len(self.map_dict), [], [])
         else:
+            feature = map(lambda x: self.map_dict.get(x,
+                self.map_dict[self.unknown_key]), feature)
             feature = sorted(feature)
-            return SparseVector(len(self.map_dict), feature, [1]*len(self.map_dict))
+            return SparseVector(len(self.map_dict), feature, [1.0]*len(feature))

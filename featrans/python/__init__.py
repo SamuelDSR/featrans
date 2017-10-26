@@ -5,7 +5,7 @@ from onehot import OneHotEncoder
 from bucketizer import Bucketizer
 from pipeline import Pipeline
 from combiner import Combiner
-from sparsevector import SparseVector
+from sparsevector import SparseVector, SparseVectorEncoder, SparseVectorDecoder
 from vectorassembler import VectorAssembler
 from udftransformer import UDFTransformer
 from typeconverter import TypeConverter

@@ -1,8 +1,9 @@
 from sparsevector import SparseVector
+from base import Transformer
 from operator import itemgetter
 
 
-class MapIndexer(object):
+class MapIndexer(Transformer):
     def __init__(self):
         pass
 

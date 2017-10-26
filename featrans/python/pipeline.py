@@ -4,13 +4,13 @@ from bucketizer import Bucketizer
 from vectorassembler import VectorAssembler
 from udftransformer import UDFTransformer
 from typeconverter import TypeConverter 
-from objectindexer import ObjecctIndexer
+from objectindexer import ObjectIndexer
 from listindexer import ListIndexer
 from mapindexer import MapIndexer
 from sparsevector import SparseVector
 
 import dill
-import logging
+import sys
 
 
 class Pipeline(object):
@@ -45,13 +45,17 @@ class Pipeline(object):
                 model_list.append(stage.save_to_dict())
             dill.dump(model_list, f)
 
-    def transform(self, feature_dict):
+    def transform(self, feature_dict, check_equality=False):
         for stage in self.stages:
-            try:
+            if not check_equality:
                 feature_dict = stage.transform(feature_dict)
-            except Exception, e:
-                print("Stage info: (name: %s, outputCol: %s)" % str(stage.name, stage.outputCol))
-                print(str(e))
-                print(feature_dict)
-                return None
+            else:
+                original = feature_dict[stage.outputCol]
+                feature_dict = stage.transform(feature_dict)
+                reconstruc = feature_dict[stage.outputCol]
+                if original != reconstruc:
+                    print("Stage info: (name: %s, outputCol: %s)" % (stage.name, stage.outputCol))
+                    print("Original: %s" % original)
+                    print("Reconstruct: %s" % reconstruc)
+                    sys.exit(0)
         return feature_dict

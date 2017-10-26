@@ -1,5 +1,8 @@
 from base import SparkTransformer
 from pyspark.ml.feature import VectorAssembler
+from pyspark.sql.functions import udf, array
+from pyspark.ml.linalg import Vectors, VectorUDT
+from pyspark.sql.types import *
 
 
 class SparkAssembler(SparkTransformer):
@@ -17,6 +20,24 @@ class SparkAssembler(SparkTransformer):
         self.internal_transformer = VectorAssembler(inputCols = inputCol_list, outputCol = outputCol)
 
     def transform(self, dataset):
+        def map_func(val_list):
+            size = 0
+            indices = []
+            values = []
+            for val in val_list:
+                if isinstance(val, IntegerType()) or isinstance(val, DoubleType())\
+                        or isinstance(val, FloatType()):
+                    indices.append(size)
+                    values.append(float(val))
+                    size += 1
+                elif isinstance(val, VectorUDT()):
+                    indices.extend(val.indices)
+                    values.extend(map(float, val.values))
+                    size += val.size
+                else:
+                    raise Exception("VectorAssembler only int/float/double/SparseVector")
+            return Vectors.sparse(size, indices, values)
+        #map_udf = udf(map_func, )
         return self.internal_transformer.transform(dataset)
 
     def save_as_dict(self):

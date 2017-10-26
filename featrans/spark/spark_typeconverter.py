@@ -12,6 +12,9 @@ class SparkTypeConverter(SparkTransformer):
         return dataset
 
     def save_as_dict(self):
-        ret = super(SparkTypeConverter, self).save_as_dict()
+        ret = {}
+        ret['name'] = self.name
+        ret['inputCol'] = self.inputCol
+        ret['outputCol'] = self.outputCol
         ret['outputType'] = self.outputType.__class__.__name__
         return ret

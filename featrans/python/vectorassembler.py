@@ -29,7 +29,7 @@ class VectorAssembler(Transformer):
                 final_sparse_vec.concat(tmp_sparse_vec)
             #single element
             else:
-                tmp_sparse_vec = SparseVector(1, [0], float(vec))
+                tmp_sparse_vec = SparseVector(1, [0], [float(vec)])
                 final_sparse_vec.concat(tmp_sparse_vec)
         return final_sparse_vec
 

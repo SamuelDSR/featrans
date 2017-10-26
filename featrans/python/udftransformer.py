@@ -14,7 +14,7 @@ class UDFTransformer(Transformer):
                 raise KeyError("Raw feature %s was not found in sample %s"
                         % (inputCol, feature_dict))
         call_args = {}
-        for f_arg, feature_name in self.args_map_dict:
+        for f_arg, feature_name in self.args_map_dict.iteritems():
             call_args[f_arg] = feature_dict[feature_name]
         feature_dict[self.outputCol]= self._transform(**call_args)
         return feature_dict

@@ -32,6 +32,11 @@ class SparkUDFTransformer(SparkTransformer):
         return dataset.withColumn(self.outputCol, map_udf(struct(self.inputCol_list)))
 
     def save_as_dict(self):
-        ret = super(SparkUDFTransformer, self).save_as_dict()
+        ret = {}
+        ret['name'] = self.name
+        ret['func'] = self.func
+        ret['inputCol_list'] = self.inputCol_list
+        ret['outputCol'] = self.outputCol
+        ret['args_map_dict'] = self.args_map_dict
         ret['outputType'] = self.outputType.__class__.__name__
         return ret
