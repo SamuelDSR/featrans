@@ -12,11 +12,15 @@ class SparkOneHotEncoder(SparkTransformer):
         self.outputCol = outputCol
 
     def transform(self, dataset):
+        _t_inputCol = self.inputCol
+        _t_outputCol = self.outputCol
+        _t_size = self.size
+
         def onehot_map_func(val, size):
             return Vectors.sparse(size, [val], [1.0])
 
         if self.size is None:
-            self.size = dataset.select(self.inputCol).rdd\
-                    .map(lambda x: x[self.inputCol]).max()
-        map_udf = udf(partial(onehot_map_func, size=self.size), VectorUDT())
-        return dataset.withColumn(self.outputCol, map_udf(col(self.inputCol)))
+            self.size = dataset.select(_t_inputCol).rdd\
+                    .map(lambda x: x[_t_inputCol]).max()
+        map_udf = udf(partial(onehot_map_func, size=_t_size), VectorUDT())
+        return dataset.withColumn(_t_outputCol, map_udf(col(_t_inputCol)))

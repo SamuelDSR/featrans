@@ -14,6 +14,11 @@ class SparkMapIndexer(SparkTransformer):
         self.unknown_key = unknown_key
 
     def transform(self, dataset):
+        _t_unknown_key = self.unknown_key
+        _t_map_dict = self.map_dict
+        _t_inputCol = self.inputCol
+        _t_outputCol = self.outputCol
+
         def map_type_map_func(val_dict, map_dict, unknown_key):
             sorted_kvs = []
             for key, val in val_dict.iteritems():
@@ -26,13 +31,14 @@ class SparkMapIndexer(SparkTransformer):
                 map(itemgetter(1), sorted_kvs))
 
         if self.map_dict is None:
-            all_keys = dataset.filter(col(self.inputCol).isNotNull())\
-                    .select(self.inputCol).rdd\
+            all_keys = dataset.filter(col(_t_inputCol).isNotNull())\
+                    .select(_t_inputCol).rdd\
                     .flatMap(lambda x: x.keys())\
                     .distinct().collect()
-            all_keys.append(self.unknown_key)
+            all_keys.append(_t_unknown_key)
             self.map_dict = dict((tup[1], tup[0]) for tup in enumerate(all_keys))
 
+
         map_udf = udf(partial(map_type_map_func,
-            map_dict=self.map_dict, unknown_key=self.unknown_key), VectorUDT())
-        return dataset.withColumn(self.outputCol, map_udf(col(self.inputCol)))
+            map_dict=_t_map_dict, unknown_key=_t_unknown_key), VectorUDT())
+        return dataset.withColumn(_t_outputCol, map_udf(col(_t_inputCol)))

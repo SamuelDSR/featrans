@@ -20,6 +20,12 @@ class SparkUDFTransformer(SparkTransformer):
             self.args_map_dict = dict(zip(func_args, self.inputCol_list))
 
     def transform(self, dataset):
+        _t_inputCol_list = self.inputCol_list
+        _t_outputCol = self.outputCol
+        _t_outputType = self.outputType
+        _t_args_map_dict = self.args_map_dict
+        _t_func = self.func
+
         def map_func(key_val_dict, func, args_map_dict):
             key_val_dict = key_val_dict.asDict()
             call_args = {}
@@ -27,9 +33,9 @@ class SparkUDFTransformer(SparkTransformer):
                 call_args[f_arg] = key_val_dict[col_name]
             return func(**call_args)
 
-        map_udf = udf(partial(map_func, func=self.func, 
-            args_map_dict=self.args_map_dict), self.outputType)
-        return dataset.withColumn(self.outputCol, map_udf(struct(self.inputCol_list)))
+        map_udf = udf(partial(map_func, func=_t_func, 
+            args_map_dict=_t_args_map_dict), _t_outputType)
+        return dataset.withColumn(_t_outputCol, map_udf(struct(_t_inputCol_list)))
 
     def save_as_dict(self):
         ret = {}

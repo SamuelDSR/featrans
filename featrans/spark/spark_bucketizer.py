@@ -11,6 +11,11 @@ class SparkBucketizer(SparkTransformer):
         self.outputCol = outputCol
 
     def transform(self, dataset):
+        #avoid pickling the entire SparkBucketizer object in yarn mode
+        _t_splits = self.splits
+        _t_outputCol = self.outputCol
+        _t_inputCol = self.inputCol
+
         def encoder_func(val, splits):
             left = 0
             right = len(splits) - 1
@@ -25,5 +30,5 @@ class SparkBucketizer(SparkTransformer):
             else:
                 return left
 
-        map_udf = udf(partial(encoder_func, splits=self.splits), IntegerType())
-        return dataset.withColumn(self.outputCol, map_udf(col(self.inputCol)))
+        map_udf = udf(partial(encoder_func, splits=_t_splits), IntegerType())
+        return dataset.withColumn(_t_outputCol, map_udf(col(_t_inputCol)))

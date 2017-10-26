@@ -12,5 +12,7 @@ class SparkCombiner(SparkTransformer):
 
     def transform(self, dataset):
         combiner_udf = udf(lambda x, y: str(x)+"-"+str(y), StringType())
-        return dataset.withColumn(self.outputCol, combiner_udf(col(self.inputCol_list[0]),\
-                col(self.inputCol_list[1])))
+        _t_outputCol = self.outputCol
+        _t_inputCol_list = self.inputCol_list
+        return dataset.withColumn(_t_outputCol, combiner_udf(col(_t_inputCol_list[0]),\
+                col(_t_inputCol_list[1])))

@@ -8,7 +8,11 @@ class SparkTypeConverter(SparkTransformer):
         self.outputType = outputType
 
     def transform(self, dataset):
-        dataset = dataset.withColumn(self.inputCol, dataset[self.outputCol].cast(self.outputType))
+        _t_inputCol = self.inputCol
+        _t_outputCol = self.outputCol
+        _t_outputType = self.outputType
+
+        dataset = dataset.withColumn(_t_outputCol, dataset[_t_inputCol].cast(_t_outputType))
         return dataset
 
     def save_as_dict(self):
