@@ -5,4 +5,9 @@ save the entire feature transform pipeline in a file, and restore the pipeline i
 saving a lot of time
 when you train a model in **pyspark** and want to use this model in a **pure** python program, for example, online production.
 
+## Installation
+
+```
+python setup.py
+```
 More to add
